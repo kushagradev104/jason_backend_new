@@ -6,4 +6,5 @@ python-multipart
 langchain
 langchain-openai
 langchain-community
+langchain-classic
 tavily-python
