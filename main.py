@@ -8,8 +8,8 @@ from dotenv import load_dotenv
 
 from langchain_openai import ChatOpenAI
 from langchain_community.tools.tavily_search import TavilyAnswer
-from langchain.classic.agents import create_tool_calling_agent
-from langchain.classic.agents import AgentExecutor
+from langchain_classic.agents import create_tool_calling_agent
+from langchain_classic.agents import AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AssistantMessage
 from langchain_core.tools import Tool
