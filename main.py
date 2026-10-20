@@ -54,7 +54,7 @@ tools = [
     )
 ]
 
-llm = ChatOpenAI(model = "gpt-40-mini", temperature = 0)
+llm = ChatOpenAI(model = "gpt-4o-mini", temperature = 0)
 
 system_message = (
     "Your name is Jason. You are a premium, highly competent workspace AI assistant. "
