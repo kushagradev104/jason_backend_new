@@ -11,7 +11,7 @@ from langchain_community.tools.tavily_search import TavilyAnswer
 from langchain_classic.agents import create_tool_calling_agent
 from langchain_classic.agents import AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import HumanMessage, AssistantMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.tools import Tool
 
 load_dotenv()
@@ -88,7 +88,7 @@ async def chat_endpoint(
             if msg.get("role") == "user":
                 formatted_history.append(HumanMessage(content=msg.get("content")))
             elif msg.get("role") == "assistant":
-                formatted_history.append(AssistantMessage(content=msg.get("content")))
+                formatted_history.append(AItMessage(content=msg.get("content")))
 
         agent_response = agent_executor.invoke({
             "input": message,
