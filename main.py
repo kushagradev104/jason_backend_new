@@ -1,10 +1,13 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
 import json
 import base64
 from fastapi import FastAPI , UploadFile , File , Form , HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
-from dotenv import load_dotenv
+
 
 from langchain_openai import ChatOpenAI
 from langchain_community.tools.tavily_search import TavilyAnswer
