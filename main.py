@@ -60,8 +60,14 @@ tools = [
         name = "math_calculator",
         func = python_calculator,
         description = "Use this tool automatically when Jason needs to compute maths operations, percentages, formulas or complex values."
+    ),
+    Tool(
+        name = "open_app_tool",
+        func = open_app_tool.run, # Or just open_app_tool depending on how it's invoked
+        description = "Use this tool when the user explicitly requests to open a desktop app or software like Spotify, Discord, VS Code, or Calculator."
     )
 ]
+
 
 llm = ChatOpenAI(
     model = "meta-llama/llama-3.1-8b-instruct", 
@@ -202,3 +208,29 @@ async def transcribe_endpoint(audio: UploadFile = File(...)):
         if os.path.exists(temp_filename):
             os.remove(temp_filename)
         raise HTTPException(status_code=500, detail=str(e))
+
+@tool
+def open_app_tool(app_name: str) -> str:
+    """
+    Use this tool when the user explicitly requests to open a desktop app or software 
+    (e.g., Spotify, Discord, VS Code, YouTube, Calculator, Chrome).
+    """
+    app_clean = app_name.lower().strip()
+    
+    # Return a structured JSON payload so the client/frontend executes it natively
+    payload = {
+        "status": "success",
+        "action": "OPEN_APP",
+        "app": app_clean,
+        "message": f"Opening {app_name} for you now!"
+    }
+    
+    return json.dumps(payload)
+    SYSTEM_PROMPT = """
+You are Jason, a fast and concise AI workspace assistant.
+
+STRICT TOOL INSTRUCTIONS:
+1. When the user asks to open an app (e.g., "open Spotify"), call the `open_app_tool`.
+2. Do NOT invent URLs or say you cannot open local files.
+3. Keep your spoken response brief and natural for Edge-TTS audio (e.g., "Opening Spotify!").
+"""
