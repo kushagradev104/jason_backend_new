@@ -121,8 +121,8 @@ async def chat_endpoint(
         MessagesPlaceholder(variable_name="agent_scratchpad"),
     ])
 
-    current_agent = create_tool_calling_agent(llm, tools, current_prompt)
-    agent_executor = AgentExecutor(agent=current_agent, tools=tools, verbose=True)
+        current_agent = create_tool_calling_agent(llm, tools, current_prompt)
+        agent_executor = AgentExecutor(agent=current_agent, tools=tools, verbose=True)
 
         formatted_history = []
         for msg in raw_history:
