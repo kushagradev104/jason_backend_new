@@ -57,7 +57,11 @@ tools = [
     )
 ]
 
-llm = ChatOpenAI(model = "gpt-4o-mini", temperature = 0)
+llm = ChatOpenAI(
+    model = "gpt-4o-mini", 
+    temperature = 0,
+    base_url = "https://models.inference.ai.azure.com"
+)
 
 system_message = (
     "Your name is Jason. You are a premium, highly competent workspace AI assistant. "
