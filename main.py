@@ -7,6 +7,7 @@ import base64
 from fastapi import FastAPI , UploadFile , File , Form , HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
+import edge_tts
 
 
 from langchain_openai import ChatOpenAI
@@ -18,7 +19,11 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.tools import Tool
 
 load_dotenv()
-client = OpenAI
+openrouter_client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENAI_API_KEY")
+)
+
 
 app = FastAPI(title="Jason Multi Modal Reasoning Backend")
 
@@ -100,7 +105,7 @@ async def chat_endpoint(
             if msg.get("role") == "user":
                 formatted_history.append(HumanMessage(content=msg.get("content")))
             elif msg.get("role") == "assistant":
-                formatted_history.append(AItMessage(content=msg.get("content")))
+                formatted_history.append(AIMessage(content=msg.get("content")))
 
         agent_response = agent_executor.invoke({
             "input": message,
@@ -110,13 +115,13 @@ async def chat_endpoint(
         ai_reply = agent_response["output"]
         response_data = {"reply": ai_reply}
 
-        if generate_voice:
-            audio_response = client.audio.speech.create(
-                model = "tts-1",
-                voice = "alloy",
-                input = ai_reply
-            )
-            base64_audio = base64.b64encode(audio_response.content).decode('utf-8')
+               if generate_voice:
+            communicate = edge_tts.Communicate(ai_reply, "en-US-ChristopherNeural")
+            audio_bytes = b""
+            async for chunk in communicate.stream():
+                if chunk["type"] == "audio":
+                    audio_bytes += chunk["data"]
+            base64_audio = base64.b64encode(audio_bytes).decode('utf-8')
             response_data["audio"] = f"data:audio/mp3;base64,{base64_audio}"
 
         return response_data
@@ -133,8 +138,8 @@ async def vision_endpoint(
         file_bytes = await image.read()
         base64_image = base64.b64encode(file_bytes).decode('utf-8')
 
-        response = client.chat.completions.create(
-            model = "gpt-4o-mini",
+        response = openrouter_client.chat.completions.create(
+            model = "openai/gpt-4o-mini",
             messages = [
                 {
                     "role": "user",
@@ -146,7 +151,7 @@ async def vision_endpoint(
             ],
             max_tokens = 400
         )
-        return {"analysis": response.choices.message.content}
+        return {"analysis": response.choices[0].message.content}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
