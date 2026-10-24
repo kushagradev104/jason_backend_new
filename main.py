@@ -122,7 +122,7 @@ async def chat_endpoint(
     ])
 
         current_agent = create_tool_calling_agent(llm, tools, current_prompt)
-                agent_executor = AgentExecutor(
+        agent_executor = AgentExecutor(
             agent=current_agent,
             tools=tools,
             verbose=True,
