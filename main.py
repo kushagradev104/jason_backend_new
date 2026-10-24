@@ -56,7 +56,7 @@ tools = [
         func = search_tool.run,
         description = "ALWAYS use this tool when asked for real-time information, current market trends, live news, historical facts, or looking up any online information from any point in time."
     ),
-        ),
+],
     Tool(
         name = "math_calculator",
         func = python_calculator,
