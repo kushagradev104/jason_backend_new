@@ -17,7 +17,7 @@ from langchain_classic.agents import create_tool_calling_agent
 from langchain_classic.agents import AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
-from langchain_core.tools import tool
+from langchain_core.tools import Tool , tool
 
 load_dotenv()
 openrouter_client = OpenAI(
