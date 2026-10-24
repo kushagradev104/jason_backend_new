@@ -50,6 +50,32 @@ def python_calculator(query: str) -> str:
     except Exception as e:
         return f"Calculation error: {str(e)}.Ensure you add valid basic maths symbols"
 
+@tool
+def open_app_tool(app_name: str) -> str:
+    """
+    Use this tool when the user explicitly requests to open a desktop app or software 
+    (e.g., Spotify, Discord, VS Code, YouTube, Calculator, Chrome).
+    """
+    app_clean = app_name.lower().strip()
+    
+    # Return a structured JSON payload so the client/frontend executes it natively
+    payload = {
+        "status": "success",
+        "action": "OPEN_APP",
+        "app": app_clean,
+        "message": f"Opening {app_name} for you now!"
+    }
+    
+    return json.dumps(payload)
+    SYSTEM_PROMPT = """
+You are Jason, a fast and concise AI workspace assistant.
+
+STRICT TOOL INSTRUCTIONS:
+1. When the user asks to open an app (e.g., "open Spotify"), call the `open_app_tool`.
+2. Do NOT invent URLs or say you cannot open local files.
+3. Keep your spoken response brief and natural for Edge-TTS audio (e.g., "Opening Spotify!").
+"""
+
 tools = [
     Tool(
         name = "web_search",
@@ -95,11 +121,6 @@ prompt = ChatPromptTemplate.from_messages([
     MessagesPlaceholder(variable_name="agent_scratchpad"),
 ])
 
-
-
-
-
-       
 @app.post("/api/chat")
 async def chat_endpoint(
         message: str = Form(...),
@@ -209,28 +230,3 @@ async def transcribe_endpoint(audio: UploadFile = File(...)):
             os.remove(temp_filename)
         raise HTTPException(status_code=500, detail=str(e))
 
-@tool
-def open_app_tool(app_name: str) -> str:
-    """
-    Use this tool when the user explicitly requests to open a desktop app or software 
-    (e.g., Spotify, Discord, VS Code, YouTube, Calculator, Chrome).
-    """
-    app_clean = app_name.lower().strip()
-    
-    # Return a structured JSON payload so the client/frontend executes it natively
-    payload = {
-        "status": "success",
-        "action": "OPEN_APP",
-        "app": app_clean,
-        "message": f"Opening {app_name} for you now!"
-    }
-    
-    return json.dumps(payload)
-    SYSTEM_PROMPT = """
-You are Jason, a fast and concise AI workspace assistant.
-
-STRICT TOOL INSTRUCTIONS:
-1. When the user asks to open an app (e.g., "open Spotify"), call the `open_app_tool`.
-2. Do NOT invent URLs or say you cannot open local files.
-3. Keep your spoken response brief and natural for Edge-TTS audio (e.g., "Opening Spotify!").
-"""
