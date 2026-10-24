@@ -93,8 +93,7 @@ prompt = ChatPromptTemplate.from_messages([
 
 
 
-        ai_reply = agent_response["output"]
-        response_data = {"reply": ai_reply}
+       
 @app.post("/api/chat")
 async def chat_endpoint(
         message: str = Form(...),
@@ -115,6 +114,16 @@ async def chat_endpoint(
             f"Keep your replies conversational, accurate, and structured."
         )
 
+        current_prompt = ChatPromptTemplate.from_messages([
+        ("system", dynamic_system_message),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("human", "{input}"),
+        MessagesPlaceholder(variable_name="agent_scratchpad"),
+    ])
+
+    current_agent = create_tool_calling_agent(llm, tools, current_prompt)
+    agent_executor = AgentExecutor(agent=current_agent, tools=tools, verbose=True)
+
         formatted_history = []
         for msg in raw_history:
             if msg.get("role") == "user":
@@ -122,7 +131,7 @@ async def chat_endpoint(
             elif msg.get("role") == "assistant":
                 formatted_history.append(AIMessage(content=msg.get("content")))
 
-        agent_response = await agent_executor.invoke({
+        agent_response = await agent_executor.ainvoke({
             "input": message,
             "chat_history": formatted_history
         })
@@ -174,7 +183,7 @@ async def transcribe_endpoint(audio: UploadFile = File(...)):
             f.write(await audio.read())
 
         with open(temp_filename, "rb") as audio_file:
-            transcript = client.audio.transcriptions.create(model ="whisper-1", file = audio_file)
+            transcript = openrouter_client.audio.transcriptions.create(model ="whisper-1", file = audio_file)
 
         os.remove(temp_filename)
         return {"text": transcript.text}
