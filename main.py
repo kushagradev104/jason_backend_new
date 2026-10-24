@@ -135,6 +135,10 @@ async def chat_endpoint(
             "input": message,
             "chat_history": formatted_history
         })
+        
+        ai_reply = agent_response["output"]
+        response_data = {"reply": ai_reply}
+        
         if generate_voice:
             communicate = edge_tts.Communicate(ai_reply, "en-US-ChristopherNeural")
             audio_bytes = b""
