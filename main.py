@@ -60,7 +60,8 @@ tools = [
 llm = ChatOpenAI(
     model = "gpt-4o-mini", 
     temperature = 0,
-    base_url = "https://models.inference.ai.azure.com"
+    base_url = "https://models.inference.ai.azure.com",
+    api_key = os.getenv("OPENAI_API_KEY")
 )
 
 system_message = (
