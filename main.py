@@ -115,7 +115,7 @@ async def chat_endpoint(
         ai_reply = agent_response["output"]
         response_data = {"reply": ai_reply}
 
-               if generate_voice:
+        if generate_voice:
             communicate = edge_tts.Communicate(ai_reply, "en-US-ChristopherNeural")
             audio_bytes = b""
             async for chunk in communicate.stream():
