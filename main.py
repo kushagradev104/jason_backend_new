@@ -87,11 +87,7 @@ tools = [
         func = python_calculator,
         description = "Use this tool automatically when Jason needs to compute maths operations, percentages, formulas or complex values."
     ),
-    Tool(
-        name = "open_app_tool",
-        func = open_app_tool, # Or just open_app_tool depending on how it's invoked
-        description = "Use this tool when the user explicitly requests to open a desktop app or software like Spotify, Discord, VS Code, or Calculator."
-    )
+    open_app_tool
 ]
 
 
