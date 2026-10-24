@@ -4,6 +4,7 @@ load_dotenv()
 import os
 import json
 import base64
+from datetime import datetime
 from fastapi import FastAPI , UploadFile , File , Form , HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
@@ -53,7 +54,8 @@ tools = [
     Tool(
         name = "web search",
         func = search_tool.run,
-        description = "Use this tool automatically when Jason needs to find current information, live news or lookup specific online facts."
+        description = "ALWAYS use this tool when asked for real-time information, current market trends, live news, historical facts, or looking up any online information from any point in time."
+    ),
         ),
     Tool(
         name = "math_calculator",
@@ -88,9 +90,12 @@ prompt = ChatPromptTemplate.from_messages([
     MessagesPlaceholder(variable_name="agent_scratchpad"),
 ])
 
-agent = create_tool_calling_agent(llm, tools, prompt)
-agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
+
+
+
+        ai_reply = agent_response["output"]
+        response_data = {"reply": ai_reply}
 @app.post("/api/chat")
 async def chat_endpoint(
         message: str = Form(...),
@@ -99,6 +104,17 @@ async def chat_endpoint(
 ):
     try:
         raw_history = json.loads(history)
+        current_time_str = datetime.now().strftime("%A, %B %d, %Y at %I:%M %p")
+
+        dynamic_system_message = (
+            f"Your name is Jason. You are a premium, highly competent workspace AI assistant. "
+            f"The current date and time is {current_time_str}. "
+            f"Always introduce yourself as Jason when greeted for the first time. "
+            f"You have automated tools for web searching and high-precision calculations. You MUST use them contextually "
+            f"whenever the user requests real-time data, current events, or mathematical solutions. "
+            f"Never mention knowledge cutoffs, training data limits, or state that you cannot browse the internet. "
+            f"Keep your replies conversational, accurate, and structured."
+        )
 
         formatted_history = []
         for msg in raw_history:
@@ -107,14 +123,10 @@ async def chat_endpoint(
             elif msg.get("role") == "assistant":
                 formatted_history.append(AIMessage(content=msg.get("content")))
 
-        agent_response = agent_executor.invoke({
+        agent_response = await agent_executor.invoke({
             "input": message,
             "chat_history": formatted_history
         })
-
-        ai_reply = agent_response["output"]
-        response_data = {"reply": ai_reply}
-
         if generate_voice:
             communicate = edge_tts.Communicate(ai_reply, "en-US-ChristopherNeural")
             audio_bytes = b""
