@@ -50,7 +50,7 @@ def python_calculator(query: str) -> str:
     except Exception as e:
         return f"Calculation error: {str(e)}.Ensure you add valid basic maths symbols"
 
-@Tool
+@tool
 def open_app_tool(app_name: str) -> str:
     """
     Use this tool when the user explicitly requests to open a desktop app or software 
