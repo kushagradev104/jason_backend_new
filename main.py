@@ -63,7 +63,7 @@ tools = [
     ),
     Tool(
         name = "open_app_tool",
-        func = open_app_tool.run, # Or just open_app_tool depending on how it's invoked
+        func = open_app_tool, # Or just open_app_tool depending on how it's invoked
         description = "Use this tool when the user explicitly requests to open a desktop app or software like Spotify, Discord, VS Code, or Calculator."
     )
 ]
