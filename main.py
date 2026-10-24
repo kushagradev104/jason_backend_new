@@ -61,7 +61,11 @@ llm = ChatOpenAI(
     model = "meta-llama/llama-3.1-8b-instruct:free", 
     temperature = 0,
     base_url = "https://openrouter.ai/api/v1",
-    api_key = os.getenv("OPENAI_API_KEY")
+    api_key = os.getenv("OPENAI_API_KEY"),
+    default_headers={
+        "HTTP-Referer": "https://render.com",
+        "X-Title": "Jason AI Agent"
+    }
 )
 
 system_message = (
