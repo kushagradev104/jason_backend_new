@@ -52,7 +52,7 @@ def python_calculator(query: str) -> str:
 
 tools = [
     Tool(
-        name = "web search",
+        name = "web_search",
         func = search_tool.run,
         description = "ALWAYS use this tool when asked for real-time information, current market trends, live news, historical facts, or looking up any online information from any point in time."
     ),
@@ -122,7 +122,14 @@ async def chat_endpoint(
     ])
 
         current_agent = create_tool_calling_agent(llm, tools, current_prompt)
-        agent_executor = AgentExecutor(agent=current_agent, tools=tools, verbose=True)
+                agent_executor = AgentExecutor(
+            agent=current_agent,
+            tools=tools,
+            verbose=True,
+            handle_parsing_errors=True,
+            max_iterations=5
+        )
+
 
         formatted_history = []
         for msg in raw_history:
