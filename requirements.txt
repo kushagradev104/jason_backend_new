@@ -9,3 +9,4 @@ langchain-community
 langchain-classic
 tavily-python
 edge-tts
+openai-whisper
